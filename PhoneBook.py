@@ -1,4 +1,3 @@
-# from pprint import pprint
 import re
 import csv
 
@@ -7,14 +6,30 @@ with open("phonebook_raw.csv", encoding='utf-8') as f:
     contacts_list = list(rows)
 
 
+def get_telephone_number():
+    counter = 1
+    pattern_phone = r"[+]?\d{1}[ -]?[(]?(\d{3})[)]?[ -]?(\d{3})[ -]?(\d{2})[ -]?(\d{2})([ ]?[(]?((доб\.)[ ]?(\d+)\)))?"
+    regex_phone = re.compile(pattern_phone)
+    for list in contacts_list[1:]:
+        result = regex_phone.sub(r"+7-\1(\2)-\3-\4 \7\8", str(list))
+        contacts_list[counter] = result
+        counter += 1
+    return contacts_list
+
+
+phone_list = get_telephone_number()
+
+
 def get_lastname():
-    lastname = []
-    pattern_lastname = r"^([А-Я][а-я]*)"
+    counter = 0
+    pattern_lastname = r"^([А-Я][а-я]*)(\,)?"
     regex_lastname = re.compile(pattern_lastname)
-    for elements in contacts_list[1:]:
-        inform = re.findall(regex_lastname, elements[0])
-        lastname.append(inform)
-    return lastname
+    for elements in phone_list:
+        result = regex_lastname.sub(r"\1\, ", str(elements))
+        phone_list[counter] = result
+        counter += 1
+    return phone_list
+
 
 
 def get_surname():
@@ -36,14 +51,3 @@ def get_name():
         name.append(inform)
     return name
 
-
-def get_telephone_number():
-    phone = []
-    pattern_phone = r"((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?([\d\- ]\d+)"
-    regex_phone = re.compile(pattern_phone)
-    for elements in contacts_list[1:]:
-        inform = re.findall(regex_phone, str(elements))
-        result =pattern_phone.sub()
-    return phone
-
-print(get_telephone_number())
