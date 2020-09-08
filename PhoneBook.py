@@ -6,48 +6,56 @@ with open("phonebook_raw.csv", encoding='utf-8') as f:
     contacts_list = list(rows)
 
 
+merge_dict = {}
+list_sur = []
+list_inform = []
+for elements in contacts_list:
+    elements[0] = elements[0].split(" ")
+    keys = elements[0][0]
+    list_sur.append(keys)
+    values = elements[0:]
+    list_inform.append(values)
+
+
 def get_telephone_number():
-    counter = 1
     pattern_phone = r"[+]?\d{1}[ -]?[(]?(\d{3})[)]?[ -]?(\d{3})[ -]?(\d{2})[ -]?(\d{2})([ ]?[(]?((доб\.)[ ]?(\d+)\)))?"
     regex_phone = re.compile(pattern_phone)
-    for list in contacts_list[1:]:
-        result = regex_phone.sub(r"+7-\1(\2)-\3-\4 \7\8", str(list))
-        contacts_list[counter] = result
-        counter += 1
+    for list_ in contacts_list:
+        result = regex_phone.sub(r"+7-\1(\2)-\3-\4 \7\8", list_[5])
+        list_[5] = result
     return contacts_list
 
 
-phone_list = get_telephone_number()
-
+contacts_list_1 = get_telephone_number()
 
 def get_lastname():
-    counter = 0
     pattern_lastname = r"^([А-Я][а-я]*)(\,)?"
     regex_lastname = re.compile(pattern_lastname)
-    for elements in phone_list:
-        result = regex_lastname.sub(r"\1\, ", str(elements))
-        phone_list[counter] = result
-        counter += 1
-    return phone_list
+    for list_ in contacts_list_1:
+        result = regex_lastname.sub(r"\1, ", list_[0])
+        list_[0] = result
+    return contacts_list_1
 
-
-
-def get_surname():
-    surname = []
-    pattern_surname = r"\w*[в][и|н][ч|а]"
-    regex_surname = re.compile(pattern_surname)
-    for elements in contacts_list[1:]:
-        inform = re.findall(regex_surname, str(elements))
-        surname.append(inform)
-    return surname
+contacts_list_2 = get_lastname()
 
 
 def get_name():
-    name = []
-    pattern_name = r"([АВОИ][^Интеренет]\w+\s)"
+    pattern_name = r"([АВОИ][^Интеренет]\w+)(\ )"
     regex_name = re.compile(pattern_name)
-    for elements in contacts_list[1:]:
-        inform = re.findall(regex_name, str(elements))
-        name.append(inform)
-    return name
+    for list_ in contacts_list_2:
+        print(list_[0])
+        result = regex_name.sub(r"\1, ", list_[1])
+        list_[1] = result
+    return contacts_list_2
+
+print(get_name())
+
+def get_surname():
+    pattern_surname = r"(\w*[в][и|н][ч|а])(\,+)"
+    regex_surname = re.compile(pattern_surname)
+    for list_ in contacts_list_2:
+        result = regex_surname.sub(r"\1, ", list_[1])
+        list_[1] = result
+    return contacts_list_2
+
 
