@@ -1,6 +1,6 @@
+import csv
 import re
 from reformating_contact_list import contact_list
-
 
 unique_contacts = {}
 for contact in contact_list:
@@ -8,8 +8,9 @@ for contact in contact_list:
     if id not in unique_contacts:
         unique_contacts[id] = contact
     else:
-        unique_contacts[id] += contact
-        unique_contacts[id] = list(set(unique_contacts[id]))
+        for e in contact:
+            if e not in unique_contacts[id]:
+                unique_contacts[id].append(e)
 
 
 def get_telephone_number():
@@ -21,7 +22,7 @@ def get_telephone_number():
     return unique_contacts.values()
 
 
-# cs = get_telephone_number()
+cs = get_telephone_number()
 
 
 def get_lastname():
@@ -33,20 +34,20 @@ def get_lastname():
     return cs
 
 
-# cs2 = get_lastname()
+cs2 = get_lastname()
 
 
 def get_name():
     pattern_name = r"([АВОИ][^Интеренет]\w+)(\ )"
     regex_name = re.compile(pattern_name)
     for list_ in cs2:
-        print(list_[0])
         result = regex_name.sub(r"\1, ", list_[1])
         list_[1] = result
     return cs2
 
 
-# cs3 = get_name()
+cs3 = get_name()
+
 
 def get_surname():
     pattern_surname = r"(\w*[в][и|н][ч|а])(\,+)"
@@ -57,4 +58,14 @@ def get_surname():
     return cs3
 
 
+def write_accepted_phone_book():
+    accepted_phone_book = cs3
+    file = open("accepted_phone_book.csv", "w", encoding="utf-8")
+    with file:
+        writer = csv.writer(file)
+        writer.writerows(accepted_phone_book)
 
+
+print("Writing complete")
+
+write_accepted_phone_book()
